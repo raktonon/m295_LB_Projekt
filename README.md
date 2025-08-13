@@ -84,15 +84,13 @@ Im **TheCocktailDB-Format** – kompatibel mit M294-Frontend.
 ---
 
 ## 🧪 Tests
-Das Projekt enthält **8 Unit- und Integrationstests**:
-
-- `CocktailApiMapperTest` (API-Mapping)
+Das Projekt enthält **6 Unit- und Integrationstests**:
 - `CocktailRepositoryTest` (Suchlogik)
 - `CocktailServiceTest` (Fehlerfälle)
-- `CocktailPublicControllerTest` (Public API)
 - `CocktailMapperTest` (Core-Mapping)
 - `CocktailControllerCrudTest` (CRUD-Controller)
 - `CocktailPersistenceTest` (JPA Persistenz)
+- `CocktailBackendApplicationTests` (Fehlerfreies starten der Applikation)
 
 Tests ausführen:
 ```bash
@@ -114,9 +112,24 @@ mvn test
 
 ---
 
-## 📜 Lizenz
-Dieses Projekt wurde im Rahmen der **LB 295 – Backend mit Spring Boot realisieren** erstellt.  
-Die Verwendung ist zu Ausbildungszwecken frei.
+## 💡 Hilfestellungen
+
+- [Tutorialspoint](https://www.tutorialspoint.com/spring_boot/index.htm) wurde als Nachschlagewerk für verschiedene Java- und Spring-Boot-Konzepte genutzt.  
+  Unter anderem für Themen wie JPA-Annotationen, REST-Endpunkte und Maven-Konfigurationen.  
+  Die Erklärungen dort inklusive Codebeispielen waren sehr hilfreich.
+
+- ChatGPT wurde genutzt als:  
+  - Strukturierungshilfe beim modularen Aufbau des Projekts  
+  - Unterstützung bei der Fehlersuche allgemein, z. B. bei Fehlermeldungen im Zusammenhang mit Spring Boot, JPA und Maven  
+  - Hilfe bei der Gestaltung der API-Struktur, Testklassen und Mapper-Logik  
+  - Hinweise zu Best Practices im Umgang mit Docker, PostgreSQL und H2 für Tests  
+
+- Google Classroom (Kurse 295_BE 2-7) wurde als Nachschlagewerk für die Vorgaben und den Aufbau des Projekts genutzt.
+
+- GitHub Markdown Cheatsheet wurde für diese Dokumentation als Referenz genutzt.  
+  Zusätzlich wurde ein Mitschüler zu Rate gezogen, um Bilder direkt im Markdown anzeigen zu lassen.
+
+- Ein [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/markdown-cheatsheet) von Github wurde für diese Dokumentation als Nachschlagewerk benutzt.
 
 ---
 
