@@ -1,28 +1,38 @@
 package com.wiss.cocktailbackend.mapper;
 
-import com.wiss.cocktailbackend.dto.*;
-import com.wiss.cocktailbackend.entity.*;
+import com.wiss.cocktailbackend.dto.CocktailDTO;
+import com.wiss.cocktailbackend.dto.CocktailListItemDTO;
+import com.wiss.cocktailbackend.entity.Cocktail;
 
 public class CocktailMapper {
 
-    public static CocktailDTO toDto(Cocktail entity) {
+    public static CocktailDTO toDto(Cocktail e) {
         var dto = new CocktailDTO();
-        dto.id = entity.getId();
-        dto.name = entity.getName();
-        dto.category = entity.getCategory();
-        dto.alcoholic = entity.isAlcoholic();
-        dto.instructions = entity.getInstructions();
-        dto.thumbnailUrl = entity.getThumbnailUrl();
-        var list = new java.util.ArrayList<CocktailDTO.IngredientLine>();
-        for (var ci : entity.getIngredients()) {
-            list.add(new CocktailDTO.IngredientLine(ci.getIngredient().getName(), ci.getMeasure()));
-        }
-        dto.ingredients = list;
+        dto.id = e.getId();
+        dto.name = e.getName();
+        dto.category = e.getCategory();
+        dto.alcoholic = e.getAlcoholic();
+        dto.glass = e.getGlass();
+        dto.instructions = e.getInstructions();
+        dto.imageUrl = e.getImageUrl();
         return dto;
     }
 
-    public static CocktailListItemDTO toListItem(Cocktail entity) {
-        var names = entity.getIngredients().stream().map(ci -> ci.getIngredient().getName()).toList();
-        return new CocktailListItemDTO(entity.getId(), entity.getName(), entity.isAlcoholic(), entity.getThumbnailUrl(), names);
+    public static void apply(Cocktail e, CocktailDTO dto) {
+        e.setName(dto.name);
+        e.setCategory(dto.category);
+        e.setAlcoholic(dto.alcoholic);
+        e.setGlass(dto.glass);
+        e.setInstructions(dto.instructions);
+        e.setImageUrl(dto.imageUrl);
+    }
+
+    public static CocktailListItemDTO toListItem(Cocktail e) {
+        return new CocktailListItemDTO(
+                e.getId(),
+                e.getName(),
+                e.getAlcoholic(),
+                e.getImageUrl()
+        );
     }
 }

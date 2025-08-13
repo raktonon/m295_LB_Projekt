@@ -16,9 +16,9 @@ public class CocktailController {
     @GetMapping("/cocktails")
     public Page<CocktailListItemDTO> list(
             @RequestParam(required = false) String q,
-            @RequestParam(required = false) Boolean alcoholic,
+            @RequestParam(required = false) String alcoholic, // "Alcoholic" / "Non alcoholic"
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "12") int size) {
         return service.list(q, alcoholic, PageRequest.of(page, size, Sort.by("name").ascending()));
     }
 
@@ -35,10 +35,4 @@ public class CocktailController {
 
     @DeleteMapping("/cocktails/{id}")
     public void delete(@PathVariable Long id) { service.delete(id); }
-
-    @GetMapping("/ingredients")
-    public java.util.List<String> ingredients(@RequestParam String search) { return service.suggestIngredients(search); }
-
-    @PostMapping("/cocktails/{id}/ratings")
-    public void rate(@PathVariable Long id, @Validated @RequestBody RatingDTO dto) { service.addRating(id, dto); }
 }

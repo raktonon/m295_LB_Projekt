@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  cocktails-postgres:
+    image: postgres:16
+    container_name: cocktails_postgres
+    environment:
+      POSTGRES_DB: cocktails
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432" # <— Host-Port 5433 statt 5432
+    volumes:
+      - cocktails_data:/var/lib/postgresql/data
+      - ./docker/init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+
+volumes:
+  cocktails_data:

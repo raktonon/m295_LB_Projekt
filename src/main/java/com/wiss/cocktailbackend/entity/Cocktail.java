@@ -1,42 +1,35 @@
 package com.wiss.cocktailbackend.entity;
 
 import jakarta.persistence.*;
-import java.util.*;
 
 @Entity
+@Table(name = "cocktails")
 public class Cocktail {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @Column(nullable = false)      private String name;
+    @Column(length = 100)          private String category;
+    @Column(length = 50)           private String alcoholic;   // e.g. "Alcoholic" / "Non alcoholic"
+    @Column(length = 100)          private String glass;
+    @Column(length = 4000)         private String instructions;
+    @Column(name = "image_url")    private String imageUrl;
 
-    private String category;
-    private boolean alcoholic;
-
-    @Column(length = 4000)
-    private String instructions;
-
-    private String thumbnailUrl;
-
-    @OneToMany(mappedBy = "cocktail", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CocktailIngredient> ingredients = new ArrayList<>();
-
-    @OneToMany(mappedBy = "cocktail", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Rating> ratings = new ArrayList<>();
-
+    // getters/setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
-    public boolean isAlcoholic() { return alcoholic; }
-    public void setAlcoholic(boolean alcoholic) { this.alcoholic = alcoholic; }
+    public String getAlcoholic() { return alcoholic; }
+    public void setAlcoholic(String alcoholic) { this.alcoholic = alcoholic; }
+    public String getGlass() { return glass; }
+    public void setGlass(String glass) { this.glass = glass; }
     public String getInstructions() { return instructions; }
     public void setInstructions(String instructions) { this.instructions = instructions; }
-    public String getThumbnailUrl() { return thumbnailUrl; }
-    public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; }
-    public java.util.List<CocktailIngredient> getIngredients() { return ingredients; }
-    public java.util.List<Rating> getRatings() { return ratings; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }
