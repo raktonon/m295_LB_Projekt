@@ -37,10 +37,10 @@ src/main/java/com/wiss/cocktailbackend
 │
 ├── config/            # SwaggerConfig, WebConfig
 ├── controller/        # CocktailController
-├── dto/               # CocktailDTO, CocktailListItemDTO, RatingDto
-├── entity/            # JPA-Entitys (Cocktail, CocktailIngredient, Ingredient, Rating)
+├── dto/               # CocktailDTO, CocktailListItemDTO
+├── entity/            # JPA-Entitys (Cocktail, CocktailIngredient, Ingredient)
 ├── mapper/            # CocktailMapper
-├── repository/        # Repositorys (CocktailIngredientRepository, CocktailRepository, IngredientRepository, RatingRepository)
+├── repository/        # Repositorys (CocktailIngredientRepository, CocktailRepository, IngredientRepository)
 ├── service/           # CocktailService
 └── CocktailBackendApplication.java
 ```
