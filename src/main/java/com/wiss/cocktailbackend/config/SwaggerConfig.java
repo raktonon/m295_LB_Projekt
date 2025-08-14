@@ -11,7 +11,7 @@ public class SwaggerConfig {
     public OpenAPI apiInfo() {
         return new OpenAPI().info(new Info()
             .title("Cocktail API")
-            .description("LB295 Cocktail Backend (Schema wie Quiz-Backend)")
+            .description("LB295 Cocktail Backend")
             .version("v1"));
     }
 }
