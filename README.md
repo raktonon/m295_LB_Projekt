@@ -1,11 +1,33 @@
 # 🍹 Cocktail Backend – Spring Boot (LB 295)
 
 ## 📌 Projektbeschreibung
-Dieses Projekt ist ein **Spring Boot Backend** für eine Cocktail-Webanwendung.  
-Es stellt sowohl eine **interne CRUD-API** als auch eine **öffentliche API im TheCocktailDB-Format** bereit, sodass das M294-Frontend ohne Änderungen weiterverwendet werden kann.
+Dieses Projekt ist ein **Spring Boot Backend** für eine Cocktail-Webanwendung, welche in [LB_Projekt_m294](https://github.com/raktonon/LB_Projekt_m294) zu finden ist.  
+Es stellt eine **interne CRUD-API** bereit, sodass das M294-Frontend ohne Änderungen weiterverwendet werden kann.
 
 Das Backend nutzt **PostgreSQL** (Docker-Container) als Hauptdatenbank und **H2** als In-Memory-Datenbank für Tests.  
-Es wurde nach den Vorgaben der LB 295 modular aufgebaut.
+
+---
+## 🔄 Änderungen im Frontend
+Das M294-Frontend wurde ursprünglich für die öffentliche TheCocktailDB API entwickelt.
+Damit es mit dem M295-Backend funktioniert, müssen folgende Anpassungen vorgenommen werden:
+
+#### 1. API-URLs umstellen
+Statt ``` https://www.thecocktaildb.com/... ``` auf ```http://localhost:8080/api/cocktails``` verweisen.
+
+#### 2. Feldnamen anpassen
+- ```strDrink → name```   
+- ```strInstructions → instructions```   
+- ```strDrinkThumb → imageUrl```   
+
+#### 3. Such- und Detailendpunkte ändern
+- Suche: ```?q={suchbegriff}```   
+- Details: ```/api/cocktails/{id}```   
+
+#### 4. Bilder sicherstellen
+- Entweder ```imageUrl```-Feld im Backend pflegen oder Frontend auf lokale Bilder umstellen.
+
+
+Diese Änderungen sind optional und nur nötig, falls das M294-Frontend direkt mit diesem Backend betrieben werden soll.
 
 ---
 
@@ -14,13 +36,103 @@ Es wurde nach den Vorgaben der LB 295 modular aufgebaut.
 src/main/java/com/wiss/cocktailbackend
 │
 ├── config/            # SwaggerConfig, WebConfig
-├── controller/        # CocktailController (CRUD), CocktailPublicController (Public API)
-├── dto/               # CocktailDTO, CocktailListItemDTO, CocktailApiDto
-├── entity/            # Cocktail JPA-Entity
-├── mapper/            # CocktailMapper, CocktailApiMapper
-├── repository/        # CocktailRepository
+├── controller/        # CocktailController
+├── dto/               # CocktailDTO, CocktailListItemDTO, RatingDto
+├── entity/            # JPA-Entitys (Cocktail, CocktailIngredient, Ingredient, Rating)
+├── mapper/            # CocktailMapper
+├── repository/        # Repositorys (CocktailIngredientRepository, CocktailRepository, IngredientRepository, RatingRepository)
 ├── service/           # CocktailService
 └── CocktailBackendApplication.java
+```
+
+### Klassendiagramm
+
+```mermaid
+classDiagram
+    direction LR
+
+    class CocktailController {
+      +list(q, alcoholic, page, size)
+      +get(id)
+      +create(dto)
+      +update(id, dto)
+      +delete(id)
+    }
+
+    class CocktailService {
+      +list(q, alcoholic, pageable)
+      +get(id)
+      +create(dto)
+      +update(id, dto)
+      +delete(id)
+    }
+
+    class CocktailMapper {
+      +toDto(Cocktail): CocktailDTO
+      +toListItem(Cocktail): CocktailListItemDTO
+      +apply(Cocktail, CocktailDTO)
+    }
+
+    class CocktailRepository
+    class IngredientRepository
+    class CocktailIngredientRepository
+
+    class Cocktail {
+      Long id
+      String name
+      String category
+      String alcoholic
+      String glass
+      String instructions
+      String imageUrl
+    }
+
+    class Ingredient {
+      Long id
+      String name
+    }
+
+    class CocktailIngredient {
+      Long id
+      String measure
+    }
+
+    class CocktailDTO {
+      Long id
+      String name
+      String category
+      String alcoholic
+      String glass
+      String instructions
+      String imageUrl
+    }
+
+    class CocktailListItemDTO {
+      Long id
+      String name
+      String alcoholic
+      String imageUrl
+    }
+
+
+
+    %% Beziehungen
+    CocktailController --> CocktailService : calls
+    CocktailService --> CocktailRepository : uses
+    CocktailService --> IngredientRepository : uses
+    CocktailService --> CocktailIngredientRepository : uses
+    CocktailService --> CocktailMapper : uses
+
+    CocktailMapper ..> Cocktail : maps
+    CocktailMapper ..> CocktailDTO : maps
+    CocktailMapper ..> CocktailListItemDTO : maps
+
+    CocktailRepository ..> Cocktail : JpaRepository<Cocktail, Long>
+    IngredientRepository ..> Ingredient : JpaRepository<Ingredient, Long>
+    CocktailIngredientRepository ..> CocktailIngredient : JpaRepository<CocktailIngredient, Long>
+
+    Cocktail "1" o-- "many" CocktailIngredient : has
+    CocktailIngredient "many" --> "1" Ingredient : uses
 ```
 
 ---
@@ -36,7 +148,7 @@ docker compose -f docker-compose-cocktails.yml up -d
 ```
 - Erstellt einen Container mit dem Namen `cocktail_postgres`
 - Nutzt die Zugangsdaten aus `application.properties`
-- Standard-Port: **5433** (falls 5432 bereits belegt ist)
+- Standard-Port: **5433** (5432 wird schon vom Frontend belegt)
 
 ### 2️⃣ Umgebungsvariablen (aus `docker-compose-cocktails.yml`)
 ```yaml
@@ -54,7 +166,7 @@ docker compose -f docker-compose-cocktails.yml down
 ### 4️⃣ Initialdaten
 Beim ersten Start wird das SQL-Skript **`data.sql`** ausgeführt und befüllt die Datenbank mit Beispieldaten.  
 💡 **Hinweis:**  
-Falls du die Initialdaten erneut laden möchtest, musst du das zugehörige Docker-Volume löschen:
+Falls die Initialdaten erneut geladen werden sollen, muss man das zugehörige Docker-Volume löschen:
 ```bash
 docker volume rm <volume-name>
 ```
@@ -72,14 +184,6 @@ docker volume rm <volume-name>
 | POST    | `/api/cocktails`           | Neuen Cocktail anlegen            |
 | PUT     | `/api/cocktails/{id}`      | Cocktail aktualisieren            |
 | DELETE  | `/api/cocktails/{id}`      | Cocktail löschen                   |
-
-### 🔹 **Öffentliche API** (`/api/public`)
-Im **TheCocktailDB-Format** – kompatibel mit M294-Frontend.
-| Methode | Pfad                              | Beschreibung                                   |
-|---------|-----------------------------------|-----------------------------------------------|
-| GET     | `/api/public/cocktails`           | Array aller Cocktails (max. 100)              |
-| GET     | `/api/public/cocktails?q=mojito`  | Suche nach Name                               |
-| GET     | `/api/public/cocktails/{id}`      | Einzelcocktail im TheCocktailDB-Format        |
 
 ---
 
@@ -115,24 +219,15 @@ mvn test
 ## 💡 Hilfestellungen
 
 - [Tutorialspoint](https://www.tutorialspoint.com/spring_boot/index.htm) wurde als Nachschlagewerk für verschiedene Java- und Spring-Boot-Konzepte genutzt.  
-  Unter anderem für Themen wie JPA-Annotationen, REST-Endpunkte und Maven-Konfigurationen.  
   Die Erklärungen dort inklusive Codebeispielen waren sehr hilfreich.
 
 - ChatGPT wurde genutzt als:  
   - Strukturierungshilfe beim modularen Aufbau des Projekts  
   - Unterstützung bei der Fehlersuche allgemein, z. B. bei Fehlermeldungen im Zusammenhang mit Spring Boot, JPA und Maven  
-  - Hilfe bei der Gestaltung der API-Struktur, Testklassen und Mapper-Logik  
+  - Hilfe bei der Gestaltung der API-Struktur und Testklassen
   - Hinweise zu Best Practices im Umgang mit Docker, PostgreSQL und H2 für Tests  
 
 - Google Classroom (Kurse 295_BE 2-7) wurde als Nachschlagewerk für die Vorgaben und den Aufbau des Projekts genutzt.
 
-- GitHub Markdown Cheatsheet wurde für diese Dokumentation als Referenz genutzt.  
-  Zusätzlich wurde ein Mitschüler zu Rate gezogen, um Bilder direkt im Markdown anzeigen zu lassen.
-
 - Ein [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/markdown-cheatsheet) von Github wurde für diese Dokumentation als Nachschlagewerk benutzt.
-
----
-
-## 👤 Autor
-**Sascha Ritter**  
 
