@@ -2,7 +2,7 @@
 
 ## 📌 Projektbeschreibung
 Dieses Projekt ist ein **Spring Boot Backend** für eine Cocktail-Webanwendung, welche in [LB_Projekt_m294](https://github.com/raktonon/LB_Projekt_m294) zu finden ist.  
-Es stellt eine **interne CRUD-API** bereit, sodass das M294-Frontend ohne Änderungen weiterverwendet werden kann.
+Es stellt eine interne CRUD-API bereit, sodass das M294-Frontend mit kleinen Anpassungen (s. Abschnitt unten) weiterverwendet werden kann.
 
 Das Backend nutzt **PostgreSQL** (Docker-Container) als Hauptdatenbank und **H2** als In-Memory-Datenbank für Tests.  
 
@@ -26,7 +26,6 @@ Statt ``` https://www.thecocktaildb.com/... ``` auf ```http://localhost:8080/api
 #### 4. Bilder sicherstellen
 - Entweder ```imageUrl```-Feld im Backend pflegen oder Frontend auf lokale Bilder umstellen.
 
-
 Diese Änderungen sind optional und nur nötig, falls das M294-Frontend direkt mit diesem Backend betrieben werden soll.
 
 ---
@@ -38,9 +37,9 @@ src/main/java/com/wiss/cocktailbackend
 ├── config/            # SwaggerConfig, WebConfig
 ├── controller/        # CocktailController
 ├── dto/               # CocktailDTO, CocktailListItemDTO
-├── entity/            # JPA-Entitys (Cocktail, CocktailIngredient, Ingredient)
+├── entity/            # JPA-Entities (Cocktail, CocktailIngredient, Ingredient)
 ├── mapper/            # CocktailMapper
-├── repository/        # Repositorys (CocktailIngredientRepository, CocktailRepository, IngredientRepository)
+├── repository/        # Repositories (CocktailIngredientRepository, CocktailRepository, IngredientRepository)
 ├── service/           # CocktailService
 └── CocktailBackendApplication.java
 ```
@@ -148,14 +147,14 @@ docker compose -f docker-compose-cocktails.yml up -d
 ```
 - Erstellt einen Container mit dem Namen `cocktail_postgres`
 - Nutzt die Zugangsdaten aus `application.properties`
-- Standard-Port: **5433** (5432 wird schon vom Frontend belegt)
+- Standard-Port: **5433**
 
 ### 2️⃣ Umgebungsvariablen (aus `docker-compose-cocktails.yml`)
 ```yaml
 environment:
-  POSTGRES_DB: cocktail_app
-  POSTGRES_USER: cocktail_user
-  POSTGRES_PASSWORD: cocktail_password
+  POSTGRES_DB: cocktail
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
 ```
 
 ### 3️⃣ Container stoppen
@@ -194,7 +193,7 @@ Das Projekt enthält **6 Unit- und Integrationstests**:
 - `CocktailMapperTest` (Core-Mapping)
 - `CocktailControllerCrudTest` (CRUD-Controller)
 - `CocktailPersistenceTest` (JPA Persistenz)
-- `CocktailBackendApplicationTests` (Fehlerfreies starten der Applikation)
+- `CocktailBackendApplicationTests` (Testet das fehlerfreie Starten der Anwendung und das Zusammenspiel der Komponenten)
 
 Tests ausführen:
 ```bash
@@ -229,5 +228,5 @@ mvn test
 
 - Google Classroom (Kurse 295_BE 2-7) wurde als Nachschlagewerk für die Vorgaben und den Aufbau des Projekts genutzt.
 
-- Ein [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/markdown-cheatsheet) von Github wurde für diese Dokumentation als Nachschlagewerk benutzt.
+- Zwei Markdown-Cheatsheets ([Allgemein](https://github.com/adam-p/markdown-here/wiki/markdown-cheatsheet) und [Mermaid-Diagramm](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams)) von Github wurde für diese Dokumentation als Nachschlagewerke benutzt.
 
