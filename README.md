@@ -45,6 +45,96 @@ src/main/java/com/wiss/cocktailbackend
 └── CocktailBackendApplication.java
 ```
 
+### Klassendiagramm
+
+```mermaid
+classDiagram
+    direction LR
+
+    class CocktailController {
+      +list(q, alcoholic, page, size)
+      +get(id)
+      +create(dto)
+      +update(id, dto)
+      +delete(id)
+    }
+
+    class CocktailService {
+      +list(q, alcoholic, pageable)
+      +get(id)
+      +create(dto)
+      +update(id, dto)
+      +delete(id)
+    }
+
+    class CocktailMapper {
+      +toDto(Cocktail): CocktailDTO
+      +toListItem(Cocktail): CocktailListItemDTO
+      +apply(Cocktail, CocktailDTO)
+    }
+
+    class CocktailRepository
+    class IngredientRepository
+    class CocktailIngredientRepository
+
+    class Cocktail {
+      Long id
+      String name
+      String category
+      String alcoholic
+      String glass
+      String instructions
+      String imageUrl
+    }
+
+    class Ingredient {
+      Long id
+      String name
+    }
+
+    class CocktailIngredient {
+      Long id
+      String measure
+    }
+
+    class CocktailDTO {
+      Long id
+      String name
+      String category
+      String alcoholic
+      String glass
+      String instructions
+      String imageUrl
+    }
+
+    class CocktailListItemDTO {
+      Long id
+      String name
+      String alcoholic
+      String imageUrl
+    }
+
+
+
+    %% Beziehungen
+    CocktailController --> CocktailService : calls
+    CocktailService --> CocktailRepository : uses
+    CocktailService --> IngredientRepository : uses
+    CocktailService --> CocktailIngredientRepository : uses
+    CocktailService --> CocktailMapper : uses
+
+    CocktailMapper ..> Cocktail : maps
+    CocktailMapper ..> CocktailDTO : maps
+    CocktailMapper ..> CocktailListItemDTO : maps
+
+    CocktailRepository ..> Cocktail : JpaRepository<Cocktail, Long>
+    IngredientRepository ..> Ingredient : JpaRepository<Ingredient, Long>
+    CocktailIngredientRepository ..> CocktailIngredient : JpaRepository<CocktailIngredient, Long>
+
+    Cocktail "1" o-- "many" CocktailIngredient : has
+    CocktailIngredient "many" --> "1" Ingredient : uses
+```
+
 ---
 
 ## 🐳 Docker-Setup für PostgreSQL
@@ -94,14 +184,6 @@ docker volume rm <volume-name>
 | POST    | `/api/cocktails`           | Neuen Cocktail anlegen            |
 | PUT     | `/api/cocktails/{id}`      | Cocktail aktualisieren            |
 | DELETE  | `/api/cocktails/{id}`      | Cocktail löschen                   |
-
-### 🔹 **Öffentliche API** (`/api/public`)
-Im **TheCocktailDB-Format** – kompatibel mit M294-Frontend.
-| Methode | Pfad                              | Beschreibung                                   |
-|---------|-----------------------------------|-----------------------------------------------|
-| GET     | `/api/public/cocktails`           | Array aller Cocktails (max. 100)              |
-| GET     | `/api/public/cocktails?q=mojito`  | Suche nach Name                               |
-| GET     | `/api/public/cocktails/{id}`      | Einzelcocktail im TheCocktailDB-Format        |
 
 ---
 
